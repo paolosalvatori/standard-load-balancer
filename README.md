@@ -1,6 +1,8 @@
 ---
-services: azure-resource-manager, virtual-machine-scale-sets, load-balancer, azure-monitor, virtual-network
-platforms: dotnet
+services: azure-resource-manager
+virtual-machine-scale-sets
+load-balancer, azure-monitor
+virtual-network
 author: paolosalvatori
 ---
 
