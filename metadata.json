@@ -1,0 +1,9 @@
+{
+  "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
+  "type": "QuickStart",
+  "itemDisplayName": "Standard Load Balancer with multiple Backend Pools",
+  "description": "Adds the SCOM ACS custom Solution into an OMS Workspace",
+  "summary": "This template deploys a Standard Load Balancer with two Backend Pools, one for TCP load balancing rules, and one for Udpload balancing rules.",
+  "githubUsername": "paolosalvatori",
+  "dateUpdated": "2019-03-21"
+}

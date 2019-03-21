@@ -1,0 +1,1829 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "allResources_location": {
+            "defaultValue": "westeurope",
+            "type": "string",
+            "metadata": {
+				"description": "The location of all the resources deployed by the template"
+			}
+        },
+        "loadBalancerName_name": {
+            "defaultValue": "SkynetLB",
+            "type": "string",
+            "metadata": {
+				"description": "The name of the load balancer used by all virtual machine scale sets"
+			}
+        },
+        "virtualMachineScaleSet_1_name": {
+            "defaultValue": "SkynetTcpVmss",
+            "type": "string",
+            "metadata": {
+				"description": "The name of the first virtual machine scale set"
+			}
+        },
+        "virtualMachineScaleSet_2_name": {
+            "defaultValue": "SkynetUdpVmss",
+            "type": "string",
+            "metadata": {
+				"description": "The name of the second virtual machine scale set"
+			}
+        },
+        "virtualMachineScaleSet_1_computerNamePrefix": {
+            "defaultValue": "SkynetTcp",
+            "type": "string",
+            "metadata": {
+				"description": "The computer name prefix of the first virtual machine scale set"
+			}
+        },
+        "virtualMachineScaleSet_2_computerNamePrefix": {
+            "defaultValue": "SkynetUdp",
+            "type": "string",
+            "metadata": {
+				"description": "The computer name prefix of the second virtual machine scale set"
+			}
+        },
+        "virtualMachineScaleSet_computerSku": {
+            "defaultValue": "Standard_D3_v2",
+            "type": "string",
+            "metadata": {
+				"description": "The sku for virtual machines in the virtual machine scale set"
+			}
+        },
+        "virtualMachineScaleSet_overprovision": {
+            "defaultValue": true,
+            "type": "bool",
+            "metadata": {
+				"description": "Overprovision setting for the virtual machine scale set"
+			}
+        },
+        "virtualMachineScaleSet_adminUserName": {
+            "defaultValue": "azuser",
+            "type": "string",
+            "metadata": {
+              "description": "Remote desktop user Id"
+            }
+        },
+          "virtualMachineScaleSet_adminPassword": {
+            "defaultValue": "Trustno1",
+            "type": "securestring",
+            "metadata": {
+              "description": "Remote desktop user password"
+            }
+        },
+        "virtualMachineScaleSet_minimumInstanceCount": {
+            "defaultValue": "2",
+			"type": "string",
+			"metadata": {
+				"description": "Minimum number of virtual machines"
+			}
+        },
+        "virtualMachineScaleSet_maximumInstanceCount": {
+            "defaultValue": "5",
+			"type": "string",
+			"metadata": {
+				"description": "Maximum number of virtual machines"
+			}
+        },
+        "virtualMachineScaleSet_defaultInstanceCount": {
+            "defaultValue": "2",
+			"type": "string",
+			"metadata": {
+				"description": "Default number of virtual machines"
+			}
+        },
+        "managedDisk_storageAccountType": {
+            "defaultValue": "Standard_LRS",
+			"type": "string",
+			"metadata": {
+				"description": "The storage account type for managed disks"
+			}
+        },
+        "imageReference_publisher": {
+            "defaultValue": "Canonical",
+			"type": "string",
+			"metadata": {
+				"description": "The publisher of the image reference"
+			}
+        },
+        "imageReference_offer": {
+            "defaultValue": "UbuntuServer",
+			"type": "string",
+			"metadata": {
+				"description": "The offer of the image reference"
+			}
+        },
+        "imageReference_sku": {
+            "defaultValue": "16.04-LTS",
+			"type": "string",
+			"metadata": {
+				"description": "The sku of the image reference"
+			}
+        },
+        "imageReference_version": {
+            "defaultValue": "latest",
+			"type": "string",
+			"metadata": {
+				"description": "The version of the image reference"
+			}
+        },
+        "virtualNetwork_name": {
+            "defaultValue": "SkynetVirtualNetwork",
+            "type": "string",
+            "metadata": {
+				"description": "The name of the virtual network"
+			}
+        },
+        "virtualNetwork_addressPrefixes": {
+            "defaultValue": "10.30.0.0/24",
+            "type": "string",
+            "metadata": {
+				"description": "The address prefixes of the virtual network"
+			}
+        },
+        "subnet_1_name": {
+            "defaultValue": "SkynetTcpSubnet",
+            "type": "string",
+            "metadata": {
+				"description": "The name of the first subnet"
+			}
+        },
+        "subnet_2_name": {
+            "defaultValue": "SkynetUdpSubnet",
+            "type": "string",
+            "metadata": {
+				"description": "The name of the second subnet"
+			}
+        },
+        "subnet_1_addressPrefix": {
+            "defaultValue": "10.30.0.0/24",
+            "type": "string",
+            "metadata": {
+				"description": "The address prefix of the subnet in the first virtual network"
+			}
+        },
+        "subnet_2_addressPrefix": {
+            "defaultValue": "10.30.1.0/24",
+            "type": "string",
+            "metadata": {
+				"description": "The address prefix of the subnet in the second virtual network"
+			}
+        },
+        "loadBalancingRule1_ruleName": {
+            "defaultValue": "MqttLoadBalancingRule",
+            "type": "string",
+            "metadata": {
+				"description": "Name of load balancing rule 1"
+			}
+        },
+        "loadBalancingRule2_ruleName": {
+            "defaultValue": "HttpLoadBalancingRule",
+            "type": "string",
+            "metadata": {
+				"description": "Name of load balancing rule 2"
+			}
+        },
+        "loadBalancingRule3_ruleName": {
+            "defaultValue": "HttpsLoadBalancingRule",
+            "type": "string",
+            "metadata": {
+				"description": "Name of load balancing rule 3"
+			}
+        },
+        "loadBalancingRule4_ruleName": {
+            "defaultValue": "UdpLoadBalancingRule",
+            "type": "string",
+            "metadata": {
+				"description": "Name of load balancing rule 4"
+			}
+        },
+        "loadBalancingRule5_ruleName": {
+            "defaultValue": "UdpLoadBalancingRule",
+            "type": "string",
+            "metadata": {
+				"description": "Name of load balancing rule 5"
+			}
+        },
+        "loadBalancingRule6_ruleName": {
+            "defaultValue": "UdpLoadBalancingRule",
+            "type": "string",
+            "metadata": {
+				"description": "Name of load balancing rule 6"
+			}
+        },
+        "loadBalancingRule1_protocol": {
+            "defaultValue": "Tcp",
+            "type": "string",
+            "metadata": {
+				"description": "Protocol of load balancing rule 1"
+			}
+        },
+        "loadBalancingRule2_protocol": {
+            "defaultValue": "Tcp",
+            "type": "string",
+            "metadata": {
+				"description": "Protocol of load balancing rule 2"
+			}
+        },
+        "loadBalancingRule3_protocol": {
+            "defaultValue": "Tcp",
+            "type": "string",
+            "metadata": {
+				"description": "Protocol of load balancing rule 3"
+			}
+        },
+        "loadBalancingRule4_protocol": {
+            "defaultValue": "Tcp",
+            "type": "string",
+            "metadata": {
+				"description": "Protocol of load balancing rule 4"
+			}
+        },
+        "loadBalancingRule5_protocol": {
+            "defaultValue": "Udp",
+            "type": "string",
+            "metadata": {
+				"description": "Protocol of load balancing rule 5"
+			}
+        },
+        "loadBalancingRule6_protocol": {
+            "defaultValue": "Udp",
+            "type": "string",
+            "metadata": {
+				"description": "Protocol of load balancing rule 6"
+			}
+        },
+        "loadBalancingRule1_port": {
+            "defaultValue": 80,
+            "type": "int",
+            "metadata": {
+				"description": "Port for load balancing rule 1"
+			}
+        },
+        "loadBalancingRule2_port": {
+            "defaultValue": 443,
+            "type": "int",
+            "metadata": {
+				"description": "Port for load balancing rule 2"
+			}
+        },
+        "loadBalancingRule3_port": {
+            "defaultValue": 1883,
+            "type": "int",
+            "metadata": {
+				"description": "Port for load balancing rule 3"
+			}
+        },
+        "loadBalancingRule4_port": {
+            "defaultValue": 8883,
+            "type": "int",
+            "metadata": {
+				"description": "Port for load balancing rule 4"
+			}
+        },
+        "loadBalancingRule5_port": {
+            "defaultValue": 5683,
+            "type": "int",
+            "metadata": {
+				"description": "Port for load balancing rule 5"
+			}
+        },
+        "loadBalancingRule6_port": {
+            "defaultValue": 5684,
+            "type": "int",
+            "metadata": {
+				"description": "Port for load balancing rule 6"
+			}
+        },
+        "loadBalancingRule1_backendPort": {
+            "defaultValue": 80,
+            "type": "int",
+            "metadata": {
+				"description": "BackendPort for load balancing rule 1"
+			}
+        },
+        "loadBalancingRule2_backendPort": {
+            "defaultValue": 443,
+            "type": "int",
+            "metadata": {
+				"description": "BackendPort for load balancing rule 2"
+			}
+        },
+        "loadBalancingRule3_backendPort": {
+            "defaultValue": 1883,
+            "type": "int",
+            "metadata": {
+				"description": "BackendPort for load balancing rule 3"
+			}
+        },
+        "loadBalancingRule4_backendPort": {
+            "defaultValue": 8883,
+            "type": "int",
+            "metadata": {
+				"description": "BackendPort for load balancing rule 4"
+			}
+        },
+        "loadBalancingRule5_backendPort": {
+            "defaultValue": 5683,
+            "type": "int",
+            "metadata": {
+				"description": "BackendPort for load balancing rule 5"
+			}
+        },
+        "loadBalancingRule6_backendPort": {
+            "defaultValue": 5684,
+            "type": "int",
+            "metadata": {
+				"description": "BackendPort for load balancing rule 6"
+			}
+        },
+        "networkInterface_enableAcceleratedNetworking": {
+            "defaultValue": false,
+            "type": "bool",
+            "metadata": {
+				"description": "Enable accelerated networking when the value is true"
+			}
+        },
+        "dataDisk_caching": {
+            "defaultValue": "ReadOnly",
+            "type": "string",
+            "metadata": {
+				"description": "Caching option for data disk 1"
+			}
+        },
+        "dataDisk_diskSizeGB": {
+            "defaultValue": 50,
+            "type": "int",
+            "metadata": {
+				"description": "Size in GB of data disk 1"
+			}
+        },
+        "logAnalytics_workspaceName": {
+            "type": "string",
+            "defaultValue": "SkynetMonitoring",
+            "metadata": {
+              "description": "Name of the Log Analytics Workspace"
+            }
+        },
+        "logAnalytics_sku": {
+            "type": "string",
+            "allowedValues": [
+                "Free",
+                "Standalone",
+                "PerNode",
+                "PerGB2018"
+            ], 
+            "defaultValue": "PerNode",
+            "metadata": {
+                "description": "Specifies the service tier of the workspace: Free, Standalone, PerNode, Per-GB"
+            } 
+        }
+    },
+    "variables": {
+        "namePrefix": "[toLower(parameters('loadBalancerName_name'))]",
+        "nsgName_1": "[concat(parameters('virtualMachineScaleSet_1_name'),'NSG')]",
+        "nsgName_2": "[concat(parameters('virtualMachineScaleSet_2_name'),'NSG')]",
+        "nicName_1": "[concat(parameters('virtualMachineScaleSet_1_name'),'NIC')]",
+        "nicName_2": "[concat(parameters('virtualMachineScaleSet_2_name'),'NIC')]",
+        "probe1Name": "[concat(parameters('loadBalancingRule1_ruleName'),'Probe')]",
+        "probe2Name": "[concat(parameters('loadBalancingRule2_ruleName'),'Probe')]",
+        "probe3Name": "[concat(parameters('loadBalancingRule3_ruleName'),'Probe')]",
+        "probe4Name": "[concat(parameters('loadBalancingRule4_ruleName'),'Probe')]",
+        "publicIPAddressName": "[concat(parameters('loadBalancerName_name'), 'PublicIP')]",
+        "autoScaleSettingsName_1": "[toLower(concat(parameters('virtualMachineScaleSet_1_name'),'autoscale'))]",
+        "autoScaleSettingsName_2": "[toLower(concat(parameters('virtualMachineScaleSet_2_name'),'autoscale'))]",
+        "virtualMachineScaleSetID_1": "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSet_1_name'))]",
+        "virtualMachineScaleSetID_2": "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSet_2_name'))]",
+        "loadBalancerID": "[resourceId('Microsoft.Network/loadBalancers',parameters('loadBalancerName_name'))]",
+        "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]",
+        "nsgID_1": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('virtualMachineScaleSet_1_name'),'NSG'))]",
+        "nsgID_2": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('virtualMachineScaleSet_2_name'),'NSG'))]",
+        "subnetID_1": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetwork_name'), parameters('subnet_1_name'))]",
+        "subnetID_2": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetwork_name'), parameters('subnet_2_name'))]",
+        "natPoolName_1":"[concat(parameters('virtualMachineScaleSet_1_name'),'BackendAddressNatPool')]",
+        "natPoolName_2":"[concat(parameters('virtualMachineScaleSet_2_name'),'BackendAddressNatPool')]",
+        "natStartPort_1":50000,
+        "natEndPort_1":50299,
+        "natStartPort_2":50300,
+        "natEndPort_2":50599,
+        "natBackendPort":22,
+        "loadBalancerFrontendName": "LoadBalancerFrontend",
+        "loadBalancerBackendAddressPool_1": "[concat(parameters('virtualMachineScaleSet_1_name'),'BackendAddressPool')]",
+        "loadBalancerBackendAddressPool_2": "[concat(parameters('virtualMachineScaleSet_2_name'),'BackendAddressPool')]",
+        "loadBalancerBackendAddressPool_3": "SnatBackendAddressPool",
+        "loadBalancerInboundNatPoolID_1" : "[concat(variables('loadBalancerID'), '/inboundNatPools/', variables('natPoolName_1'))]",
+        "loadBalancerInboundNatPoolID_2" : "[concat(variables('loadBalancerID'), '/inboundNatPools/', variables('natPoolName_2'))]",
+		"loadBalancerFrontendIPConfigurationID": "[concat(variables('loadBalancerID'), '/frontendIPConfigurations/', variables('loadBalancerFrontendName'))]",
+        "loadBalancerBackendAddressPoolID_1": "[concat(variables('loadBalancerID'), '/backendAddressPools/', variables('loadBalancerBackendAddressPool_1'))]",
+        "loadBalancerBackendAddressPoolID_2": "[concat(variables('loadBalancerID'), '/backendAddressPools/', variables('loadBalancerBackendAddressPool_2'))]",
+        "loadBalancerBackendAddressPoolID_3": "[concat(variables('loadBalancerID'), '/backendAddressPools/', variables('loadBalancerBackendAddressPool_3'))]",
+        "logAnalyticsID": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('logAnalytics_workspaceName'))]",
+        "probe1ID": "[concat(variables('loadBalancerID'), '/probes/', variables('probe1Name'))]",
+        "probe2ID": "[concat(variables('loadBalancerID'), '/probes/', variables('probe2Name'))]",
+        "probe3ID": "[concat(variables('loadBalancerID'), '/probes/', variables('probe3Name'))]",
+        "probe4ID": "[concat(variables('loadBalancerID'), '/probes/', variables('probe4Name'))]",
+        "outboundRuleName": "SnatOutboundRule",
+        "allocatedOutboundPorts": 0,
+        "outboundRuleProtocol": "All",
+        "enableTcpReset": true,
+        "idleTimeoutInMinutes": 4
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "sku": {
+                "name": "[parameters('virtualMachineScaleSet_computerSku')]",
+                "tier": "Standard",
+                "capacity": "[parameters('virtualMachineScaleSet_defaultInstanceCount')]"
+            },
+            "zones": [
+                "1",
+                "2",
+                "3"
+            ],
+            "name": "[parameters('virtualMachineScaleSet_1_name')]",
+            "apiVersion": "2018-06-01",
+            "location": "[parameters('allResources_location')]",
+            "scale": null,
+            "properties": {
+                "singlePlacementGroup": true,
+                "upgradePolicy": {
+                    "mode": "Automatic"
+                },
+                "virtualMachineProfile": {
+                    "osProfile": {
+                        "computerNamePrefix": "[parameters('virtualMachineScaleSet_1_computerNamePrefix')]",
+                        "adminUsername": "[parameters('virtualMachineScaleSet_adminUserName')]",
+                        "adminPassword": "[parameters('virtualMachineScaleSet_adminPassword')]",
+                        "secrets": []
+                    },
+                    "storageProfile": {
+                        "osDisk": {
+                            "createOption": "FromImage",
+                            "caching": "ReadWrite",
+                            "managedDisk": {
+                            "storageAccountType": "[parameters('managedDisk_storageAccountType')]"
+                            }
+                        },
+                        "imageReference": {
+                            "publisher": "[parameters('imageReference_publisher')]",
+                            "offer": "[parameters('imageReference_offer')]",
+                            "sku": "[parameters('imageReference_sku')]",
+                            "version": "[parameters('imageReference_version')]"
+                        },
+                        "dataDisks": [
+                            {
+                            "lun": 1,
+                            "createOption": "Empty",
+                            "caching": "[parameters('dataDisk_caching')]",
+                            "diskSizeGB": "[parameters('dataDisk_diskSizeGB')]"
+                            }
+                        ]
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "[variables('nicName_1')]",
+                                "properties": {
+                                    "primary": true,
+                                    "enableAcceleratedNetworking": "[parameters('networkInterface_enableAcceleratedNetworking')]",
+                                    "networkSecurityGroup": {
+                                        "id": "[variables('nsgID_1')]"
+                                    },
+                                    "dnsSettings": {
+                                        "dnsServers": []
+                                    },
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "[concat(parameters('virtualMachineScaleSet_1_name'),'IpConfig')]",
+                                            "properties": {
+                                                "subnet": {
+                                                    "id": "[variables('subnetID_1')]"
+                                                },
+                                                "privateIPAddressVersion": "IPv4",
+                                                "loadBalancerBackendAddressPools": [
+                                                    {
+                                                        "id": "[variables('loadBalancerBackendAddressPoolID_1')]"
+                                                    },
+                                                    {
+                                                        "id": "[variables('loadBalancerBackendAddressPoolID_3')]"
+                                                    }
+                                                ],
+                                                "loadBalancerInboundNatPools": [
+                                                    {
+                                                        "id": "[variables('loadBalancerInboundNatPoolID_1')]"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                    "extensionProfile": {
+                        "extensions": [
+                            {
+                                "type": "Microsoft.Compute/virtualMachines/extensions",
+                                "name": "[concat(parameters('virtualMachineScaleSet_1_name'),'LogAnalytics')]",
+                                "location": "[parameters('allResources_location')]",
+                                "properties": {
+                                    "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                                    "type": "OmsAgentForLinux",
+                                    "typeHandlerVersion": "1.9",
+                                    "settings": {
+                                        "workspaceId": "[reference(variables('logAnalyticsID'),'2015-11-01-preview').customerId]"
+                                      },
+                                    "protectedSettings": {
+                                        "workspaceKey": "[listKeys(variables('logAnalyticsID'),'2015-11-01-preview').primarySharedKey]"
+                                    }
+                                }
+                            },
+                            {
+                                "type": "Microsoft.Compute/virtualMachines/extensions",
+                                "name": "[concat(parameters('virtualMachineScaleSet_1_name'),'DependencyAgent')]",
+                                "location": "[resourceGroup().location]",
+                                "properties": {
+                                    "publisher": "Microsoft.Azure.Monitoring.DependencyAgent",
+                                    "type": "DependencyAgentLinux",
+                                    "typeHandlerVersion": "9.4",
+                                    "autoUpgradeMinorVersion": true,
+                                    "settings": {},
+                                    "protectedSettings": {}
+                                }
+                            },
+                            {
+                                "type": "Microsoft.Compute/virtualMachineScaleSets/extensions",
+                                "name": "[concat(parameters('virtualMachineScaleSet_1_name'),'CustomScript')]",
+                                "properties": {
+                                  "autoUpgradeMinorVersion": true,
+                                  "settings": {
+                                    "script": "IyEvYmluL2Jhc2gKc3VkbyBhcHQtZ2V0IHVwZGF0ZSAteSAKc3VkbyBhcHQtZ2V0IHVwZ3JhZGUgLXkKc3VkbyBhcHQtZ2V0IGluc3RhbGwgLXkgbmdpbngKZWNobyAiVENQIFNlcnZlcjogJEhPU1ROQU1FIiB8IHN1ZG8gdGVlIC1hIC92YXIvd3d3L2h0bWwvaW5kZXguaHRtbA=="
+                                  },
+                                  "publisher": "Microsoft.Azure.Extensions",
+                                  "type": "CustomScript",
+                                  "typeHandlerVersion": "2.0"
+                                }
+                            }
+                        ]
+                    }
+                },
+                "overprovision": "[parameters('virtualMachineScaleSet_overprovision')]"
+            },
+            "dependsOn": [
+                "[variables('nsgID_1')]",
+                "[variables('subnetID_1')]",
+                "[variables('loadBalancerID')]",
+                "[variables('logAnalyticsID')]"
+            ]
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "sku": {
+                "name": "[parameters('virtualMachineScaleSet_computerSku')]",
+                "tier": "Standard",
+                "capacity": "[parameters('virtualMachineScaleSet_defaultInstanceCount')]"
+            },
+            "zones": [
+                "1",
+                "2",
+                "3"
+            ],
+            "name": "[parameters('virtualMachineScaleSet_2_name')]",
+            "apiVersion": "2018-06-01",
+            "location": "[parameters('allResources_location')]",
+            "scale": null,
+            "properties": {
+                "singlePlacementGroup": true,
+                "upgradePolicy": {
+                    "mode": "Automatic"
+                },
+                "virtualMachineProfile": {
+                    "osProfile": {
+                        "computerNamePrefix": "[parameters('virtualMachineScaleSet_2_computerNamePrefix')]",
+                        "adminUsername": "[parameters('virtualMachineScaleSet_adminUserName')]",
+                        "adminPassword": "[parameters('virtualMachineScaleSet_adminPassword')]",
+                        "secrets": []
+                    },
+                    "storageProfile": {
+                        "osDisk": {
+                            "createOption": "FromImage",
+                            "caching": "ReadWrite",
+                            "managedDisk": {
+                            "storageAccountType": "[parameters('managedDisk_storageAccountType')]"
+                            }
+                        },
+                        "imageReference": {
+                            "publisher": "[parameters('imageReference_publisher')]",
+                            "offer": "[parameters('imageReference_offer')]",
+                            "sku": "[parameters('imageReference_sku')]",
+                            "version": "[parameters('imageReference_version')]"
+                        },
+                        "dataDisks": [
+                            {
+                            "lun": 1,
+                            "createOption": "Empty",
+                            "caching": "[parameters('dataDisk_caching')]",
+                            "diskSizeGB": "[parameters('dataDisk_diskSizeGB')]"
+                            }
+                        ]
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "[variables('nicName_2')]",
+                                "properties": {
+                                    "primary": true,
+                                    "enableAcceleratedNetworking": "[parameters('networkInterface_enableAcceleratedNetworking')]",
+                                    "networkSecurityGroup": {
+                                        "id": "[variables('nsgID_2')]"
+                                    },
+                                    "dnsSettings": {
+                                        "dnsServers": []
+                                    },
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "[concat(parameters('virtualMachineScaleSet_2_name'),'IpConfig')]",
+                                            "properties": {
+                                                "subnet": {
+                                                    "id": "[variables('subnetID_2')]"
+                                                },
+                                                "privateIPAddressVersion": "IPv4",
+                                                "loadBalancerBackendAddressPools": [
+                                                    {
+                                                        "id": "[variables('loadBalancerBackendAddressPoolID_2')]"
+                                                    },
+                                                    {
+                                                        "id": "[variables('loadBalancerBackendAddressPoolID_3')]"
+                                                    }
+                                                ],
+                                                "loadBalancerInboundNatPools": [
+                                                    {
+                                                        "id": "[variables('loadBalancerInboundNatPoolID_2')]"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                    "extensionProfile": {
+                        "extensions": [
+                            {
+                                "type": "Microsoft.Compute/virtualMachines/extensions",
+                                "name": "[concat(parameters('virtualMachineScaleSet_2_name'),'LogAnalytics')]",
+                                "location": "[parameters('allResources_location')]",
+                                "properties": {
+                                    "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                                    "type": "OmsAgentForLinux",
+                                    "typeHandlerVersion": "1.9",
+                                    "settings": {
+                                        "workspaceId": "[reference(variables('logAnalyticsID'),'2015-11-01-preview').customerId]"
+                                      },
+                                    "protectedSettings": {
+                                        "workspaceKey": "[listKeys(variables('logAnalyticsID'),'2015-11-01-preview').primarySharedKey]"
+                                    }
+                                }
+                            },
+                            {
+                                "type": "Microsoft.Compute/virtualMachines/extensions",
+                                "name": "[concat(parameters('virtualMachineScaleSet_2_name'),'DependencyAgent')]",
+                                "location": "[resourceGroup().location]",
+                                "properties": {
+                                    "publisher": "Microsoft.Azure.Monitoring.DependencyAgent",
+                                    "type": "DependencyAgentLinux",
+                                    "typeHandlerVersion": "9.4",
+                                    "autoUpgradeMinorVersion": true,
+                                    "settings": {},
+                                    "protectedSettings": {}
+                                }
+                            },
+                            {
+                                "type": "Microsoft.Compute/virtualMachineScaleSets/extensions",
+                                "name": "[concat(parameters('virtualMachineScaleSet_2_name'),'CustomScript')]",
+                                "properties": {
+                                  "autoUpgradeMinorVersion": true,
+                                  "settings": {
+                                    "script": "IyEvYmluL2Jhc2gKCnN1ZG8gY2F0ID4gc3RhcnQtbmV0Y2F0LWxvb3Auc2ggPDxFT0wKIyEvYmluL2Jhc2gKCndoaWxlIHRydWUgCmRvIAogICAgZWNobyAiVURQIFNlcnZlcjogJEhPU1ROQU1FIiB8IG5jIC11IC1sIC13IDEgNTY4MyAKZG9uZQpFT0wKCmNobW9kIGEreCBzdGFydC1uZXRjYXQtbG9vcC5zaApzY3JpcHQ9JChyZWFscGF0aCBzdGFydC1uZXRjYXQtbG9vcC5zaCkKCnRvdWNoIGJhY2tncm91bmQtcHJvY2Vzcy5zZXJ2aWNlCgpzdWRvIGNhdCA+IGJhY2tncm91bmQtcHJvY2Vzcy5zZXJ2aWNlIDw8RU9MCltVbml0XQpEZXNjcmlwdGlvbj1CYWNrZ3JvdW4gUHJvY2VzcwpBZnRlcj1zeXNsb2cudGFyZ2V0IG5ldHdvcmsudGFyZ2V0CgpbU2VydmljZV0KVHlwZT1zaW1wbGUKVXNlcj1yb290CkV4ZWNTdGFydD0kc2NyaXB0ClJlc3RhcnQ9b24tYWJvcnQKCltJbnN0YWxsXQpXYW50ZWRCeT1tdWx0aS11c2VyLnRhcmdldApFT0wKCnN1ZG8gY3AgYmFja2dyb3VuZC1wcm9jZXNzLnNlcnZpY2UgL2V0Yy9zeXN0ZW1kL3N5c3RlbS8KCnN1ZG8gc3lzdGVtY3RsIGRhZW1vbi1yZWxvYWQKc3VkbyBzZXJ2aWNlIGJhY2tncm91bmQtcHJvY2VzcyBzdGFydApzdWRvIHN1ZG8gc3lzdGVtY3RsIGVuYWJsZSBiYWNrZ3JvdW5kLXByb2Nlc3M="
+                                  },
+                                  "publisher": "Microsoft.Azure.Extensions",
+                                  "type": "CustomScript",
+                                  "typeHandlerVersion": "2.0"
+                                }
+                            }
+                        ]
+                    }
+                },
+                "overprovision": "[parameters('virtualMachineScaleSet_overprovision')]"
+            },
+            "dependsOn": [
+                "[variables('nsgID_2')]",
+                "[variables('subnetID_2')]",
+                "[variables('loadBalancerID')]",
+                "[variables('logAnalyticsID')]"
+            ]
+        },
+        {
+            "type": "microsoft.insights/autoscalesettings",
+            "name": "[variables('autoScaleSettingsName_1')]",
+            "apiVersion": "2014-04-01",
+            "location": "[parameters('allResources_location')]",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "profiles": [
+                    {
+                        "name": "Profile1",
+                        "capacity": {
+                            "minimum": "[parameters('virtualMachineScaleSet_minimumInstanceCount')]",
+                            "maximum": "[parameters('virtualMachineScaleSet_maximumInstanceCount')]",
+                            "default": "[parameters('virtualMachineScaleSet_defaultInstanceCount')]"
+                        },
+                        "rules": [
+                            {
+                                "metricTrigger": {
+                                    "metricName": "Percentage CPU",
+                                    "metricNamespace": "",
+                                    "metricResourceUri": "[variables('virtualMachineScaleSetID_1')]",
+                                    "timeGrain": "PT1M",
+                                    "statistic": "Average",
+                                    "timeWindow": "PT5M",
+                                    "timeAggregation": "Average",
+                                    "operator": "GreaterThan",
+                                    "threshold": 75
+                                },
+                                "scaleAction": {
+                                    "direction": "Increase",
+                                    "type": "ChangeCount",
+                                    "value": "1",
+                                    "cooldown": "PT1M"
+                                }
+                            },
+                            {
+                                "metricTrigger": {
+                                    "metricName": "Percentage CPU",
+                                    "metricNamespace": "",
+                                    "metricResourceUri": "[variables('virtualMachineScaleSetID_1')]",
+                                    "timeGrain": "PT1M",
+                                    "statistic": "Average",
+                                    "timeWindow": "PT5M",
+                                    "timeAggregation": "Average",
+                                    "operator": "LessThan",
+                                    "threshold": 25
+                                },
+                                "scaleAction": {
+                                    "direction": "Decrease",
+                                    "type": "ChangeCount",
+                                    "value": "1",
+                                    "cooldown": "PT1M"
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "enabled": true,
+                "name": "[variables('autoScaleSettingsName_1')]",
+                "targetResourceUri": "[variables('virtualMachineScaleSetID_1')]"
+            },
+            "dependsOn": [
+                "[variables('virtualMachineScaleSetID_1')]"
+            ]
+        },
+        {
+            "type": "microsoft.insights/autoscalesettings",
+            "name": "[variables('autoScaleSettingsName_2')]",
+            "apiVersion": "2014-04-01",
+            "location": "[parameters('allResources_location')]",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "profiles": [
+                    {
+                        "name": "Profile1",
+                        "capacity": {
+                            "minimum": "[parameters('virtualMachineScaleSet_minimumInstanceCount')]",
+                            "maximum": "[parameters('virtualMachineScaleSet_maximumInstanceCount')]",
+                            "default": "[parameters('virtualMachineScaleSet_defaultInstanceCount')]"
+                        },
+                        "rules": [
+                            {
+                                "metricTrigger": {
+                                    "metricName": "Percentage CPU",
+                                    "metricNamespace": "",
+                                    "metricResourceUri": "[variables('virtualMachineScaleSetID_2')]",
+                                    "timeGrain": "PT1M",
+                                    "statistic": "Average",
+                                    "timeWindow": "PT5M",
+                                    "timeAggregation": "Average",
+                                    "operator": "GreaterThan",
+                                    "threshold": 75
+                                },
+                                "scaleAction": {
+                                    "direction": "Increase",
+                                    "type": "ChangeCount",
+                                    "value": "1",
+                                    "cooldown": "PT1M"
+                                }
+                            },
+                            {
+                                "metricTrigger": {
+                                    "metricName": "Percentage CPU",
+                                    "metricNamespace": "",
+                                    "metricResourceUri": "[variables('virtualMachineScaleSetID_2')]",
+                                    "timeGrain": "PT1M",
+                                    "statistic": "Average",
+                                    "timeWindow": "PT5M",
+                                    "timeAggregation": "Average",
+                                    "operator": "LessThan",
+                                    "threshold": 25
+                                },
+                                "scaleAction": {
+                                    "direction": "Decrease",
+                                    "type": "ChangeCount",
+                                    "value": "1",
+                                    "cooldown": "PT1M"
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "enabled": true,
+                "name": "[variables('autoScaleSettingsName_2')]",
+                "targetResourceUri": "[variables('virtualMachineScaleSetID_2')]"
+            },
+            "dependsOn": [
+                "[variables('virtualMachineScaleSetID_2')]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/loadBalancers",
+            "sku": {
+                "name": "Standard",
+                "tier": "Regional"
+            },
+            "name": "[parameters('loadBalancerName_name')]",
+            "apiVersion": "2018-11-01",
+            "location": "[parameters('allResources_location')]",
+            "scale": null,
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "[variables('loadBalancerFrontendName')]",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[variables('publicIPAddressID')]"
+                            }
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "[variables('loadBalancerBackendAddressPool_1')]"
+                    },
+                    {
+                        "name": "[variables('loadBalancerBackendAddressPool_2')]"
+                    },
+                    {
+                        "name": "[variables('loadBalancerBackendAddressPool_3')]"
+                    }
+                ],
+                "outboundRules": [
+                    {
+                        "name": "[variables('outboundRuleName')]",
+                        "properties": {
+                            "allocatedOutboundPorts": "[variables('allocatedOutboundPorts')]",
+                            "frontendIPConfigurations": [
+                                {
+                                    "id": "[variables('loadBalancerFrontendIPConfigurationID')]"
+                                }
+                            ],
+                            "backendAddressPool": {
+                                "id": "[variables('loadBalancerBackendAddressPoolID_3')]"
+                            },
+                            "protocol": "[variables('outboundRuleProtocol')]",
+                            "enableTcpReset": "[variables('enableTcpReset')]",
+                            "idleTimeoutInMinutes": "[variables('idleTimeoutInMinutes')]"
+                        }
+                    }
+                ],
+                "loadBalancingRules": [
+					{
+                        "name": "[parameters('loadBalancingRule1_ruleName')]",
+                        "properties": {
+                          "backendAddressPool": {
+                            "id": "[variables('loadBalancerBackendAddressPoolID_1')]"
+                          },
+                          "backendPort": "[parameters('loadBalancingRule1_backendPort')]",
+                          "enableFloatingIP": false,
+                          "frontendIPConfiguration": {
+                            "id": "[variables('loadBalancerFrontendIPConfigurationID')]"
+                          },
+                          "frontendPort": "[parameters('loadBalancingRule1_port')]",
+                          "idleTimeoutInMinutes": 5,
+                          "probe": {
+                            "id": "[variables('probe1ID')]"
+                          },
+                          "protocol": "[parameters('loadBalancingRule1_protocol')]",
+                          "disableOutboundSNAT": true
+                        }
+                    },
+                    {
+                        "name": "[parameters('loadBalancingRule2_ruleName')]",
+                        "properties": {
+                          "backendAddressPool": {
+                            "id": "[variables('loadBalancerBackendAddressPoolID_1')]"
+                          },
+                          "backendPort": "[parameters('loadBalancingRule2_backendPort')]",
+                          "enableFloatingIP": false,
+                          "frontendIPConfiguration": {
+                            "id": "[variables('loadBalancerFrontendIPConfigurationID')]"
+                          },
+                          "frontendPort": "[parameters('loadBalancingRule2_port')]",
+                          "idleTimeoutInMinutes": 5,
+                          "probe": {
+                            "id": "[variables('probe2ID')]"
+                          },
+                          "protocol": "[parameters('loadBalancingRule2_protocol')]",
+                          "disableOutboundSNAT": true
+                        }
+                    },
+                    {
+                        "name": "[parameters('loadBalancingRule3_ruleName')]",
+                        "properties": {
+                          "backendAddressPool": {
+                            "id": "[variables('loadBalancerBackendAddressPoolID_1')]"
+                          },
+                          "backendPort": "[parameters('loadBalancingRule3_backendPort')]",
+                          "enableFloatingIP": false,
+                          "frontendIPConfiguration": {
+                            "id": "[variables('loadBalancerFrontendIPConfigurationID')]"
+                          },
+                          "frontendPort": "[parameters('loadBalancingRule3_port')]",
+                          "idleTimeoutInMinutes": 5,
+                          "probe": {
+                            "id": "[variables('probe3ID')]"
+                          },
+                          "protocol": "[parameters('loadBalancingRule3_protocol')]",
+                          "disableOutboundSNAT": true
+                        }
+                    },
+                    {
+                        "name": "[parameters('loadBalancingRule4_ruleName')]",
+                        "properties": {
+                          "backendAddressPool": {
+                            "id": "[variables('loadBalancerBackendAddressPoolID_1')]"
+                          },
+                          "backendPort": "[parameters('loadBalancingRule4_backendPort')]",
+                          "enableFloatingIP": false,
+                          "frontendIPConfiguration": {
+                            "id": "[variables('loadBalancerFrontendIPConfigurationID')]"
+                          },
+                          "frontendPort": "[parameters('loadBalancingRule4_port')]",
+                          "idleTimeoutInMinutes": 5,
+                          "probe": {
+                            "id": "[variables('probe4ID')]"
+                          },
+                          "protocol": "[parameters('loadBalancingRule4_protocol')]",
+                          "disableOutboundSNAT": true
+                        }
+                    },
+                    {
+                        "name": "[parameters('loadBalancingRule5_ruleName')]",
+                        "properties": {
+                          "backendAddressPool": {
+                            "id": "[variables('loadBalancerBackendAddressPoolID_2')]"
+                          },
+                          "backendPort": "[parameters('loadBalancingRule5_backendPort')]",
+                          "enableFloatingIP": false,
+                          "frontendIPConfiguration": {
+                            "id": "[variables('loadBalancerFrontendIPConfigurationID')]"
+                          },
+                          "frontendPort": "[parameters('loadBalancingRule5_port')]",
+                          "idleTimeoutInMinutes": 5,
+                          "protocol": "[parameters('loadBalancingRule5_protocol')]",
+                          "disableOutboundSNAT": true
+                        }
+                    },
+                    {
+                        "name": "[parameters('loadBalancingRule6_ruleName')]",
+                        "properties": {
+                          "backendAddressPool": {
+                            "id": "[variables('loadBalancerBackendAddressPoolID_2')]"
+                          },
+                          "backendPort": "[parameters('loadBalancingRule6_backendPort')]",
+                          "enableFloatingIP": false,
+                          "frontendIPConfiguration": {
+                            "id": "[variables('loadBalancerFrontendIPConfigurationID')]"
+                          },
+                          "frontendPort": "[parameters('loadBalancingRule6_port')]",
+                          "idleTimeoutInMinutes": 5,
+                          "protocol": "[parameters('loadBalancingRule6_protocol')]",
+                          "disableOutboundSNAT": true
+                        }
+                    }
+				],
+				"probes": [
+					{
+                        "name": "[variables('probe1Name')]",
+                        "properties": {
+                          "intervalInSeconds": 5,
+                          "numberOfProbes": 2,
+                          "port": "[parameters('loadBalancingRule1_backendPort')]",
+                          "protocol": "Tcp"
+                        }
+                    },
+                    {
+                        "name": "[variables('probe2Name')]",
+                        "properties": {
+                          "intervalInSeconds": 5,
+                          "numberOfProbes": 2,
+                          "port": "[parameters('loadBalancingRule2_backendPort')]",
+                          "protocol": "Tcp"
+                        }
+                    },
+                    {
+                        "name": "[variables('probe3Name')]",
+                        "properties": {
+                          "intervalInSeconds": 5,
+                          "numberOfProbes": 2,
+                          "port": "[parameters('loadBalancingRule3_backendPort')]",
+                          "protocol": "Tcp"
+                        }
+                    },
+                    {
+                        "name": "[variables('probe4Name')]",
+                        "properties": {
+                          "intervalInSeconds": 5,
+                          "numberOfProbes": 2,
+                          "port": "[parameters('loadBalancingRule4_backendPort')]",
+                          "protocol": "Tcp"
+                        }
+                    }
+				],
+                "inboundNatRules": [],
+                "outboundNatRules": [],
+                "inboundNatPools": [
+                    {
+                        "name":"[variables('natPoolName_1')]",
+                        "properties": {
+                            "frontendPortRangeStart":"[variables('natStartPort_1')]",
+                            "frontendPortRangeEnd":"[variables('natEndPort_1')]",
+                            "backendPort":"[variables('natBackendPort')]",
+                            "protocol": "Tcp",
+                            "frontendIPConfiguration": {
+                                "id": "[variables('loadBalancerFrontendIPConfigurationID')]"
+                            }
+                        }
+                    },
+                    {
+                        "name":"[variables('natPoolName_2')]",
+                        "properties": {
+                            "frontendPortRangeStart":"[variables('natStartPort_2')]",
+                            "frontendPortRangeEnd":"[variables('natEndPort_2')]",
+                            "backendPort":"[variables('natBackendPort')]",
+                            "protocol": "Tcp",
+                            "frontendIPConfiguration": {
+                                "id": "[variables('loadBalancerFrontendIPConfigurationID')]"
+                            }
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[variables('publicIPAddressID')]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "sku": {
+                "name": "Standard",
+                "tier": "Regional"
+            },
+            "name": "[variables('publicIPAddressName')]",
+            "apiVersion": "2018-11-01",
+            "location": "[parameters('allResources_location')]",
+            "scale": null,
+            "properties": {
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": 4,
+                "dnsSettings": {
+                    "domainNameLabel": "[variables('namePrefix')]"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('virtualNetwork_name')]",
+            "apiVersion": "2018-11-01",
+            "location": "[parameters('allResources_location')]",
+            "scale": null,
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('virtualNetwork_addressPrefixes')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('subnet_1_name')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('subnet_1_addressPrefix')]"
+                        }
+                    },
+                    {
+                        "name": "[parameters('subnet_2_name')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('subnet_2_addressPrefix')]"
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": [],
+                "enableDdosProtection": false,
+                "enableVmProtection": false
+            },
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('virtualNetwork_name'), '/', parameters('subnet_1_name'))]",
+            "apiVersion": "2018-11-01",
+            "scale": null,
+            "properties": {
+                "addressPrefix": "[parameters('subnet_1_addressPrefix')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetwork_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('virtualNetwork_name'), '/', parameters('subnet_2_name'))]",
+            "apiVersion": "2018-11-01",
+            "scale": null,
+            "properties": {
+                "addressPrefix": "[parameters('subnet_2_addressPrefix')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetwork_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[variables('nsgName_1')]",
+            "apiVersion": "2018-11-01",
+            "location": "[parameters('allResources_location')]",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "DefaultAllowSsh",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1000,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "HttpInBound",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "80",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1001,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "HttpsInBound",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1002,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "MqttPort1883InBound",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "1883",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1003,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "MqttPort8883InBound",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "8883",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1004,
+                            "direction": "Inbound"
+                        }
+                    }
+                ],
+                "defaultSecurityRules": [
+                    {
+                        "name": "AllowVnetInBound",
+                        "properties": {
+                            "description": "Allow inbound traffic from all VMs in VNET",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "destinationAddressPrefix": "VirtualNetwork",
+                            "access": "Allow",
+                            "priority": 65000,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "AllowAzureLoadBalancerInBound",
+                        "properties": {
+                            "description": "Allow inbound traffic from azure load balancer",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "AzureLoadBalancer",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 65001,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "DenyAllInBound",
+                        "properties": {
+                            "description": "Deny all inbound traffic",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 65500,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "AllowVnetOutBound",
+                        "properties": {
+                            "description": "Allow outbound traffic from all VMs to all VMs in VNET",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "destinationAddressPrefix": "VirtualNetwork",
+                            "access": "Allow",
+                            "priority": 65000,
+                            "direction": "Outbound"
+                        }
+                    },
+                    {
+                        "name": "AllowInternetOutBound",
+                        "properties": {
+                            "description": "Allow outbound traffic from all VMs to Internet",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "Internet",
+                            "access": "Allow",
+                            "priority": 65001,
+                            "direction": "Outbound"
+                        }
+                    },
+                    {
+                        "name": "DenyAllOutBound",
+                        "properties": {
+                            "description": "Deny all outbound traffic",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 65500,
+                            "direction": "Outbound"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[variables('nsgName_2')]",
+            "apiVersion": "2018-11-01",
+            "location": "[parameters('allResources_location')]",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "DefaultAllowSsh",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1000,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "CoAPPort5683InBound",
+                        "properties": {
+                            "protocol": "Udp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "5683",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1001,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "CoAPPort5684InBound",
+                        "properties": {
+                            "protocol": "Udp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "5684",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1002,
+                            "direction": "Inbound"
+                        }
+                    }
+                ],
+                "defaultSecurityRules": [
+                    {
+                        "name": "AllowVnetInBound",
+                        "properties": {
+                            "description": "Allow inbound traffic from all VMs in VNET",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "destinationAddressPrefix": "VirtualNetwork",
+                            "access": "Allow",
+                            "priority": 65000,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "AllowAzureLoadBalancerInBound",
+                        "properties": {
+                            "description": "Allow inbound traffic from azure load balancer",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "AzureLoadBalancer",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 65001,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "DenyAllInBound",
+                        "properties": {
+                            "description": "Deny all inbound traffic",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 65500,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "AllowVnetOutBound",
+                        "properties": {
+                            "description": "Allow outbound traffic from all VMs to all VMs in VNET",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "destinationAddressPrefix": "VirtualNetwork",
+                            "access": "Allow",
+                            "priority": 65000,
+                            "direction": "Outbound"
+                        }
+                    },
+                    {
+                        "name": "AllowInternetOutBound",
+                        "properties": {
+                            "description": "Allow outbound traffic from all VMs to Internet",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "Internet",
+                            "access": "Allow",
+                            "priority": 65001,
+                            "direction": "Outbound"
+                        }
+                    },
+                    {
+                        "name": "DenyAllOutBound",
+                        "properties": {
+                            "description": "Deny all outbound traffic",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 65500,
+                            "direction": "Outbound"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "apiVersion": "2017-03-15-preview",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "name": "[parameters('logAnalytics_workspaceName')]",
+            "location": "[parameters('allResources_location')]",
+            "properties": {
+                "sku": {
+                    "name": "[parameters('logAnalytics_sku')]"
+                }
+            },
+            "resources": [
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "dataSources",
+                    "name": "Kern",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('logAnalytics_workspaceName'))]"
+                    ],
+                    "kind": "LinuxSyslog",
+                    "properties": {
+                        "syslogName": "kern",
+                        "syslogSeverities": [
+                        {
+                            "severity": "emerg"
+                        },
+                        {
+                            "severity": "alert"
+                        },
+                        {
+                            "severity": "crit"
+                        },
+                        {
+                            "severity": "err"
+                        },
+                        {
+                            "severity": "warning"
+                        }
+                        ]
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "dataSources",
+                    "name": "Syslog",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('logAnalytics_workspaceName'))]"
+                    ],
+                    "kind": "LinuxSyslog",
+                    "properties": {
+                        "syslogName": "syslog",
+                        "syslogSeverities": [
+                        {
+                            "severity": "emerg"
+                        },
+                        {
+                            "severity": "alert"
+                        },
+                        {
+                            "severity": "crit"
+                        },
+                        {
+                            "severity": "err"
+                        },
+                        {
+                            "severity": "warning"
+                        }
+                        ]
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "dataSources",
+                    "name": "User",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('logAnalytics_workspaceName'))]"
+                    ],
+                    "kind": "LinuxSyslog",
+                    "properties": {
+                        "syslogName": "user",
+                        "syslogSeverities": [
+                        {
+                            "severity": "emerg"
+                        },
+                        {
+                            "severity": "alert"
+                        },
+                        {
+                            "severity": "crit"
+                        },
+                        {
+                            "severity": "err"
+                        },
+                        {
+                            "severity": "warning"
+                        }
+                        ]
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "dataSources",
+                    "name": "SampleSyslogCollection1",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('logAnalytics_workspaceName'))]"
+                    ],
+                    "kind": "LinuxSyslogCollection",
+                    "properties": {
+                        "state": "Enabled"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "dataSources",
+                    "name": "DiskPerfCounters",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('logAnalytics_workspaceName'))]"
+                    ],
+                    "kind": "LinuxPerformanceObject",
+                    "properties": {
+                        "performanceCounters": [
+                            {
+                                "counterName": "% Used Inodes"
+                            },
+                            {
+                                "counterName": "Free Megabytes"
+                            },
+                            {
+                                "counterName": "% Used Space"
+                            },
+                            {
+                                "counterName": "Disk Transfers/sec"
+                            },
+                            {
+                                "counterName": "Disk Reads/sec"
+                            },
+                            {
+                                "counterName": "Disk Writes/sec"
+                            },
+                            {
+                                "counterName": "Disk Read Bytes/sec"
+                            },
+                            {
+                                "counterName": "Disk Write Bytes/sec"
+                            }
+                        ],
+                        "objectName": "Logical Disk",
+                        "instanceName": "*",
+                        "intervalSeconds": 10
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "dataSources",
+                    "name": "ProcessorPerfCounters",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('logAnalytics_workspaceName'))]"
+                    ],
+                    "kind": "LinuxPerformanceObject",
+                    "properties": {
+                        "performanceCounters": [
+                            {
+                                "counterName": "% Processor Time"
+                            },
+                            {
+                                "counterName": "% User Time"
+                            },
+                            {
+                                "counterName": "% Privileged Time"
+                            },
+                            {
+                                "counterName": "% IO Wait Time"
+                            },
+                            {
+                                "counterName": "% Idle Time"
+                            },
+                            {
+                                "counterName": "% Interrupt Time"
+                            }
+                        ],
+                        "objectName": "Processor",
+                        "instanceName": "*",
+                        "intervalSeconds": 10
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "dataSources",
+                    "name": "ProcessPerfCounters",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('logAnalytics_workspaceName'))]"
+                    ],
+                    "kind": "LinuxPerformanceObject",
+                    "properties": {
+                        "performanceCounters": [
+                            {
+                                "counterName": "% User Time"
+                            },
+                            {
+                                "counterName": "% Privileged Time"
+                            },
+                            {
+                                "counterName": "Used Memory"
+                            },
+                            {
+                                "counterName": "Virtual Shared Memory"
+                            }
+                        ],
+                        "objectName": "Process",
+                        "instanceName": "*",
+                        "intervalSeconds": 10
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "dataSources",
+                    "name": "SystemPerfCounters",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('logAnalytics_workspaceName'))]"
+                    ],
+                    "kind": "LinuxPerformanceObject",
+                    "properties": {
+                        "performanceCounters": [
+                            {
+                                "counterName": "Processes"
+                            }
+                            ],
+                        "objectName": "System",
+                        "instanceName": "*",
+                        "intervalSeconds": 10
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "dataSources",
+                    "name": "NetworkPerfCounters",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('logAnalytics_workspaceName'))]"
+                    ],
+                    "kind": "LinuxPerformanceObject",
+                    "properties": {
+                            "performanceCounters": [
+                            {
+                                "counterName": "Total Bytes Transmitted"
+                            },
+                            {
+                                "counterName": "Total Bytes Received"
+                            },
+                            {
+                                "counterName": "Total Bytes"
+                            },
+                            {
+                                "counterName": "Total Packets Transmitted"
+                            },
+                            {
+                                "counterName": "Total Packets Received"
+                            },
+                            {
+                                "counterName": "Total Rx Errors"
+                            },
+                            {
+                                "counterName": "Total Tx Errors"
+                            },
+                            {
+                                "counterName": "Total Collisions"
+                            }
+                        ],
+                        "objectName": "Network",
+                        "instanceName": "*",
+                        "intervalSeconds": 10
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "dataSources",
+                    "name": "MemorydataSources",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('logAnalytics_workspaceName'))]"
+                    ],
+                    "kind": "LinuxPerformanceObject",
+                    "properties": {
+                        "performanceCounters": [
+                            {
+                                "counterName": "Available MBytes Memory"
+                            },
+                            {
+                                "counterName": "% Available Memory"
+                            },
+                            {
+                                "counterName": "Used Memory MBytes"
+                            },
+                            {
+                                "counterName": "% Used Memory"
+                            }
+                        ],
+                        "objectName": "Memory",
+                        "instanceName": "*",
+                        "intervalSeconds": 10
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "dataSources",
+                    "name": "SampleLinuxPerfCollection1",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('logAnalytics_workspaceName'))]"
+                    ],
+                    "kind": "LinuxPerformanceCollection",
+                    "properties": {
+                        "state": "Enabled"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "location": "[parameters('allResources_location')]",
+                    "name": "[concat('ServiceMap', '(', parameters('logAnalytics_workspaceName'),')')]",
+                    "type": "Microsoft.OperationsManagement/solutions",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('logAnalytics_workspaceName'))]"
+                    ],
+                    "properties": {
+                        "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('logAnalytics_workspaceName'))]"
+                    },
+
+                    "plan": {
+                        "name": "[concat('ServiceMap', '(', parameters('logAnalytics_workspaceName'),')')]",
+                        "publisher": "Microsoft",
+                        "product": "[Concat('OMSGallery/', 'ServiceMap')]",
+                        "promotionCode": ""
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "location": "[parameters('allResources_location')]",
+                    "name": "[concat('InfrastructureInsights', '(', parameters('logAnalytics_workspaceName'),')')]",
+                    "type": "Microsoft.OperationsManagement/solutions",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('logAnalytics_workspaceName'))]"
+                    ],
+                    "properties": {
+                        "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('logAnalytics_workspaceName'))]"
+                    },
+                    "plan": {
+                        "name": "[concat('InfrastructureInsights', '(', parameters('logAnalytics_workspaceName'),')')]",
+                        "publisher": "Microsoft",
+                        "product": "[Concat('OMSGallery/', 'InfrastructureInsights')]",
+                        "promotionCode": ""
+                    }
+                }
+            ]
+        }
+    ]
+}

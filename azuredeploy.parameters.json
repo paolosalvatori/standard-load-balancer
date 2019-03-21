@@ -1,0 +1,165 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "allResources_location": {
+            "value": "westeurope"
+        },
+        "loadBalancerName_name": {
+            "value": "SkynetLB"
+        },
+        "virtualMachineScaleSet_1_name": {
+            "value": "SkynetTcpVmss"
+        },
+        "virtualMachineScaleSet_2_name": {
+            "value": "SkynetUdpVmss"
+        },
+        "virtualMachineScaleSet_1_computerNamePrefix": {
+            "value": "SkynetTcp"
+        },
+        "virtualMachineScaleSet_2_computerNamePrefix": {
+            "value": "SkynetUdp"
+        },
+        "virtualMachineScaleSet_computerSku": {
+            "value": "Standard_D3_v2"
+        },
+        "virtualMachineScaleSet_overprovision": {
+            "value": false
+        },
+        "virtualMachineScaleSet_adminUserName": {
+            "value": "azuser"
+        },
+        "virtualMachineScaleSet_adminPassword": {
+            "value": "Trustno1"
+        },
+        "virtualMachineScaleSet_minimumInstanceCount": {
+            "value": "2"
+        },
+        "virtualMachineScaleSet_maximumInstanceCount": {
+            "value": "5"
+        },
+        "virtualMachineScaleSet_defaultInstanceCount": {
+            "value": "2"
+        },
+        "managedDisk_storageAccountType": {
+            "value": "Standard_LRS"
+        },
+        "imageReference_publisher": {
+            "value": "Canonical"
+        },
+        "imageReference_offer": {
+            "value": "UbuntuServer"
+        },
+        "imageReference_sku": {
+            "value": "16.04-LTS"
+        },
+        "imageReference_version": {
+            "value": "latest"
+        },
+        "virtualNetwork_name": {
+            "value": "SkynetVirtualNetwork"
+        },
+        "virtualNetwork_addressPrefixes": {
+            "value": "10.30.0.0/16"
+        },
+        "subnet_1_name": {
+            "value": "SkynetTcpSubnet"
+        },
+        "subnet_2_name": {
+            "value": "SkynetUdpSubnet"
+        },
+        "subnet_1_addressPrefix": {
+            "value": "10.30.0.0/24"
+        },
+        "subnet_2_addressPrefix": {
+            "value": "10.30.1.0/24"
+        },
+        "loadBalancingRule1_ruleName": {
+            "value": "HttpLoadBalancingRule"
+        },
+        "loadBalancingRule2_ruleName": {
+            "value": "HttpsLoadBalancingRule"
+        },
+        "loadBalancingRule3_ruleName": {
+            "value": "Mqtt1883LoadBalancingRule"
+        },
+        "loadBalancingRule4_ruleName": {
+            "value": "Mqtt8883LoadBalancingRule"
+        },
+        "loadBalancingRule5_ruleName": {
+            "value": "CoAP5683LoadBalancingRule"
+        },
+        "loadBalancingRule6_ruleName": {
+            "value": "CoAP5684LoadBalancingRule"
+        },
+        "loadBalancingRule1_protocol": {
+            "value": "Tcp"
+        },
+        "loadBalancingRule2_protocol": {
+            "value": "Tcp"
+        },
+        "loadBalancingRule3_protocol": {
+            "value": "Tcp"
+        },
+        "loadBalancingRule4_protocol": {
+            "value": "Tcp"
+        },
+        "loadBalancingRule5_protocol": {
+            "value": "Udp"
+        },
+        "loadBalancingRule6_protocol": {
+            "value": "Udp"
+        },
+        "loadBalancingRule1_port": {
+            "value": 80
+        },
+        "loadBalancingRule2_port": {
+            "value": 443
+        },
+        "loadBalancingRule3_port": {
+            "value": 1883
+        },
+        "loadBalancingRule4_port": {
+            "value": 8883
+        },
+        "loadBalancingRule5_port": {
+            "value": 5683
+        },
+        "loadBalancingRule6_port": {
+            "value": 5684
+        },
+        "loadBalancingRule1_backendPort": {
+            "value": 80
+        },
+        "loadBalancingRule2_backendPort": {
+            "value": 443
+        },
+        "loadBalancingRule3_backendPort": {
+            "value": 1883
+        },
+        "loadBalancingRule4_backendPort": {
+            "value": 8883
+        },
+        "loadBalancingRule5_backendPort": {
+            "value": 5683
+        },
+        "loadBalancingRule6_backendPort": {
+            "value": 5684
+        },
+        "networkInterface_enableAcceleratedNetworking": {
+            "value": true
+        },
+        "dataDisk_caching": {
+            "value": "ReadOnly"
+        },
+        "dataDisk_diskSizeGB": {
+            "value": 50
+        },
+        "logAnalytics_workspaceName": {
+            "value": "SkynetMonitoring"
+        },
+        "logAnalytics_sku": {
+            "value": "PerNode"
+        }
+    }
+}
