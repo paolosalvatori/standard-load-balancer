@@ -44,6 +44,10 @@ The ARM template deploys a Standard Load Balancer with  a single frontend IP con
     - CoAP traffic over SSL on port 5684
 - The third backend pool includes all the virtual machines from the two previous backend pools and defines an outbound rule to provide them with outbound connectivity on TCP and UDP transport protocols. Outbound rules make it simple to configure public [Standard Load Balancer](https://docs.microsoft.com/en-us/azure/load-balancer/load-balancer-standard-overview)'s outbound network address translation. For more information, see [Outbound Connections in Azure](https://docs.microsoft.com/en-us/azure/load-balancer/load-balancer-outbound-connections) and [Load Balancer Oubound Rules](https://docs.microsoft.com/en-us/azure/load-balancer/load-balancer-outbound-rules-overview)
 
+Please note the following:
+- Standard Load Balancer does not support more than one outbound rules that use the same frontend IP configuration and the same transport protocol.
+- If an outbound rule is defined for a <frontend IP configuration, transport protocol> tuple, all the load balancing rules that use the same frontend IP configuration and transport protocol, need to have the disableOutboundSNAT property set to true.
+- When the Standard Load Balancer uses a single frontend IP configuration and multiple backend pools BP1..BPn that need to open outbound connections to the internet, you can create an additional backend pool BPn+1, include in BPn+1  all the VMs from all the backend pools that need to access the internet in it, and define the outbound rule on the BPn+1 backend pool.
 
 The following picture shows the frontend IP configuration of the standard load balancer.
 
