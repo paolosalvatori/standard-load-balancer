@@ -52,7 +52,7 @@
 			}
         },
         "virtualMachineScaleSet_overprovision": {
-            "defaultValue": true,
+            "defaultValue": false,
             "type": "bool",
             "metadata": {
 				"description": "Overprovision setting for the virtual machine scale set"
@@ -136,7 +136,7 @@
 			}
         },
         "virtualNetwork_addressPrefixes": {
-            "defaultValue": "10.30.0.0/24",
+            "defaultValue": "10.30.0.0/16",
             "type": "string",
             "metadata": {
 				"description": "The address prefixes of the virtual network"
@@ -339,7 +339,7 @@
 			}
         },
         "networkInterface_enableAcceleratedNetworking": {
-            "defaultValue": false,
+            "defaultValue": true,
             "type": "bool",
             "metadata": {
 				"description": "Enable accelerated networking when the value is true"

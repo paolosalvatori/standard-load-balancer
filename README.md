@@ -46,7 +46,7 @@ The ARM template deploys a Standard Load Balancer with  a single frontend IP con
 
 The following picture shows the frontend IP configuration of the standard load balancer.
 
-![Topology](https://raw.githubusercontent.com/paolosalvatori/standard-load-balancer/master/images/frontendIpConfiguration.png)
+![Topology](https://raw.githubusercontent.com/paolosalvatori/standard-load-balancer/master/images/frontendIPConfiguration.png)
 <br/>
 
 The following picture shows the backend pools of the standard load balancer.
@@ -67,10 +67,20 @@ The following picture shows the inbound nat rules created by the ARM template.
 
 The ARM template creates a virtual network with two subnets, one for each virtual machine scale set hosting, respectively, the backend service for TCP-based requests and the backend service for UDP-based requests. Each virtual machine scale set is configured to: 
 - use Linux OS
- - be placed in a dedicated subnet of the same VNET
- - be zone-redundant (zone 1 2 3)
- - send data to Log Analytics
- - autoscaling (CPU)
- - use managed disks
- - use an attached data disk
- - use a custom script for VM initialization (see below)
+- use accelerated networking
+- be placed in a dedicated subnet of the same VNET
+- be zone-redundant (zone 1 2 3)
+- send data to Log Analytics
+- autoscaling (CPU)
+- use managed disks
+- use an attached data disk
+- use a custom script for VM initialization (see below)
+
+Virtual machine scale sets are configured to use the following virtual machine extensions:
+- [OmsAgentForLinux](https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/oms-linux): Azure Monitor logs provides monitoring, alerting, and alert remediation capabilities across cloud and on-premises assets. The extension for Linux virtual machines installs the Log Analytics agent on Azure virtual machines, and enrolls virtual machines into an existing Log Analytics workspace. 
+- [DependencyAgentLinux](https://docs.microsoft.com/en-us/azure/azure-monitor/insights/service-map-configure): In addition to the Log Analytics agent for Linux, Linux agents require the Microsoft Dependency Agent to collect and send diagnostics data to Log Analytics Solutions such as [Service Map](https://docs.microsoft.com/en-us/azure/azure-monitor/insights/service-map).
+- [CustomScript](https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/custom-script-linux): the Azure Custom Script Extension for Linux virtual machines is used to run scripts at provisioning time on Linux virtual machines.
+
+The Azure Custom Script Extension is used to run a bash script on the virtual machines of both virtual machine scale sets.
+
+TCP
