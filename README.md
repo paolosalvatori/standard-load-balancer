@@ -31,6 +31,7 @@ The following picture shows the network topology obtained using the **Topology**
 ![Topology](https://raw.githubusercontent.com/paolosalvatori/standard-load-balancer/master/images/topology.png)
 <br/>
 
+## Standard Load Balancer ##
 The ARM template deploys a Standard Load Balancer with  a single frontend IP configuration and 3 backend pools:
 
 - The first backend pool is used to handle TCP trafficusing load balancing rules on the following ports:
@@ -65,7 +66,23 @@ The following picture shows the inbound nat rules created by the ARM template.
 ![Topology](https://raw.githubusercontent.com/paolosalvatori/standard-load-balancer/master/images/inboundNatRules.png)
 <br/>
 
-The ARM template creates a virtual network with two subnets, one for each virtual machine scale set hosting, respectively, the backend service for TCP-based requests and the backend service for UDP-based requests. Each virtual machine scale set is configured to: 
+## Virtual Network ##
+
+The ARM template creates a virtual network with two subnets, one for each virtual machine scale set hosting, respectively, the backend service for TCP-based requests and the backend service for UDP-based requests. 
+
+The following picture shows the virtual machines distributed across two subnets in the virtual network:
+
+![Virtual Network](https://raw.githubusercontent.com/paolosalvatori/standard-load-balancer/master/images/vnet.png)
+
+## Virtual Machine Scale Sets ##
+
+The ARM template creates two virtual machine scale sets, one for handling TCP-based communications (HTTP/S and MQTT), and one for handling UDP-based requests (CoAP). 
+
+The following picture obtained using [Azure Monitor for VMs](https://docs.microsoft.com/en-us/azure/azure-monitor/insights/vminsights-overview) shows the virtual machines in the two virtual machine scale sets:
+
+![Virtual Network](https://raw.githubusercontent.com/paolosalvatori/standard-load-balancer/master/images/vmss.png)
+
+Each virtual machine scale set is configured to: 
 - use Linux OS
 - use accelerated networking
 - be placed in a dedicated subnet of the same VNET
@@ -83,4 +100,80 @@ Virtual machine scale sets are configured to use the following virtual machine e
 
 The Azure Custom Script Extension is used to run a bash script on the virtual machines of both virtual machine scale sets.
 
-TCP
+The following bash script is used to install NGINX on the Linux virtual machines in the **TcpVmss** virtual machine scale set:
+
+```bash
+#!/bin/bash
+
+sudo apt-get update -y 
+sudo apt-get upgrade -y
+sudo apt-get install -y nginx
+echo "TCP Server: $HOSTNAME" | sudo tee -a /var/www/html/index.html
+```
+
+The following bash script is used to initialize the Linux virtual machines in the **TcpVmss** virtual machine scale set. The script creates a custom service that uses netcat command to handle UDP requests on port 5683. Please note that if you have a script that will cause a reboot, then install applications and run scripts etc. You should schedule the reboot using a Cron job, or using tools such as DSC, or Chef, Puppet extensions. The CustomScript extension will only run a script once, if you want to run a script on every boot, then you can use [cloud-init image](https://docs.microsoft.com/azure/virtual-machines/linux/using-cloud-init) and use a [Scripts Per Boot](https://cloudinit.readthedocs.io/en/latest/topics/modules.html#scripts-per-boot) module. Alternatively, you can use the script to create a Systemd service unit. If you want to schedule when a script will run, you should use the extension to create a Cron job.
+
+```bash
+#!/bin/bash
+
+sudo cat > start-netcat-loop.sh <<EOL
+#!/bin/bash
+
+while true 
+do 
+    echo "UDP Server: $HOSTNAME" | nc -u -l -w 1 5683 
+done
+EOL
+
+chmod a+x start-netcat-loop.sh
+script=$(realpath start-netcat-loop.sh)
+
+touch background-process.service
+
+sudo cat > background-process.service <<EOL
+[Unit]
+Description=Backgroun Process
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=$script
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
+EOL
+
+sudo cp background-process.service /etc/systemd/system/
+
+sudo systemctl daemon-reload
+sudo service background-process start
+sudo sudo systemctl enable background-process
+```
+
+## Log Analytics ##
+The ARM template deploys and configures a Log Analytics workspace that can be used to monitor the health and performance of the entire infrastructure and in particular of the Linux virtual machines in both virtual machines scale sets.
+
+Log Analytics workspace is configured to use the following solutions:
+
+- [Azure Monitor for VMs](https://docs.microsoft.com/en-us/azure/azure-monitor/insights/vminsights-overview): Azure Monitor for VMs can be used to monitor Linux and Windows Azure virtual machines (VM) and virtual machine scale sets at scale. It analyzes the performance and health of your Windows and Linux VMs, and monitors their processes and dependencies on other resources and external processes.
+- [Service Map](https://docs.microsoft.com/en-us/azure/azure-monitor/insights/service-map): Service Map automatically discovers application components on Windows and Linux systems and maps the communication between services. With Service Map, you can view your servers in the way that you think of them: as interconnected systems that deliver critical services. Service Map shows connections between servers, processes, inbound and outbound connection latency, and ports across any TCP-connected architecture, with no configuration required other than the installation of an agent.
+
+In addition, Log Analytics worspace is configured to retrieve syslog events and metrics (CPU, Memory, Network) from Linux virtual machines:
+
+## Test ##
+Once deployed the infrastructure, you can use the following commands to test both TCP and UDP connectivity.
+
+```bash
+#!/bin/bash
+publicIp=<load-balancer-public-ip>
+
+# Test TCP connectivity
+curl $publicIp
+
+# Test UDP connectivity
+echo 'Hello' | nc -u -w 1 $publicIp 5683
+```
+
+Note that TCP requests are handled by virtual machines in the **TcpVmss** virtual machine scale set, while UDP requests are handled by virtual machines in the **UdpVmss** virtual machine scale set.
