@@ -78,8 +78,19 @@ The following picture shows the virtual machines distributed across two subnets 
 
 ![Virtual Network](https://raw.githubusercontent.com/paolosalvatori/standard-load-balancer/master/images/vnet.png)
 
-## Virtual Machine Scale Sets ##
+## Network Security Groups ##
+The ARM template deploys two [network security groups](https://docs.microsoft.com/en-us/azure/virtual-network/security-overview). Security rules are used to allow or deny inbound network traffic to, or outbound network traffic from the virtual machines in the two virtual machines scale sets.
 
+The following picture shows the inbound and outbound rules of the network security group associated with the **TcpVmss** virtual machine scale set:
+
+![Virtual Network](https://raw.githubusercontent.com/paolosalvatori/standard-load-balancer/master/images/tcpnsg.png)
+
+The following picture shows the inbound and outbound rules of the network security group associated with the **UdpVmss** virtual machine scale set:
+
+![Virtual Network](https://raw.githubusercontent.com/paolosalvatori/standard-load-balancer/master/images/udpnsg.png)
+
+
+## Virtual Machine Scale Sets ##
 The ARM template creates two virtual machine scale sets, one for handling TCP-based communications (HTTP/S and MQTT), and one for handling UDP-based requests (CoAP). 
 
 The following picture obtained using [Azure Monitor for VMs](https://docs.microsoft.com/en-us/azure/azure-monitor/insights/vminsights-overview) shows the virtual machines in the two virtual machine scale sets:
