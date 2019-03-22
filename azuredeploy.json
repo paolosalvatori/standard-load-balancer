@@ -171,42 +171,42 @@
 			}
         },
         "loadBalancingRule1_ruleName": {
-            "defaultValue": "MqttLoadBalancingRule",
+            "defaultValue": "HttpLoadBalancingRule",
             "type": "string",
             "metadata": {
 				"description": "Name of load balancing rule 1"
 			}
         },
         "loadBalancingRule2_ruleName": {
-            "defaultValue": "HttpLoadBalancingRule",
+            "defaultValue": "HttpsLoadBalancingRule",
             "type": "string",
             "metadata": {
 				"description": "Name of load balancing rule 2"
 			}
         },
         "loadBalancingRule3_ruleName": {
-            "defaultValue": "HttpsLoadBalancingRule",
+            "defaultValue": "Mqtt1883LoadBalancingRule",
             "type": "string",
             "metadata": {
 				"description": "Name of load balancing rule 3"
 			}
         },
         "loadBalancingRule4_ruleName": {
-            "defaultValue": "UdpLoadBalancingRule",
+            "defaultValue": "Mqtt8883LoadBalancingRule",
             "type": "string",
             "metadata": {
 				"description": "Name of load balancing rule 4"
 			}
         },
         "loadBalancingRule5_ruleName": {
-            "defaultValue": "UdpLoadBalancingRule",
+            "defaultValue": "CoAP5683LoadBalancingRule",
             "type": "string",
             "metadata": {
 				"description": "Name of load balancing rule 5"
 			}
         },
         "loadBalancingRule6_ruleName": {
-            "defaultValue": "UdpLoadBalancingRule",
+            "defaultValue": "CoAP5684LoadBalancingRule",
             "type": "string",
             "metadata": {
 				"description": "Name of load balancing rule 6"
