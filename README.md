@@ -12,3 +12,10 @@ author: paolosalvatori
 </a>
 <br>
 This template deploys a Standard Load Balancer with two Backend Pools, one for TCP load balancing rules, and one for Udpload balancing rules.
+
+# Architecture Design #
+The following picture shows the network topology obtained using the **Topology** tool of **Azure Network Watcher**. For more information, see [View the topology of an Azure virtual network](https://docs.microsoft.com/en-us/azure/network-watcher/view-network-topology).
+<br/>
+<br/>
+![Topology](https://raw.githubusercontent.com/paolosalvatori/standard-load-balancer/master/topology.png)
+<br/>
